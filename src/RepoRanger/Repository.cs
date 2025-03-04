@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Text.Json;
 
 
 namespace RepoRanger;
 
 public interface IRepository
 {
-    Task InsertManyAsync(IEnumerable<BsonDocument> repositories);
+    Task InsertManyAsync(IEnumerable<JsonElement> repositories);
 }
 
 public class MongoDbRepository : IRepository
@@ -28,7 +29,7 @@ public class MongoDbRepository : IRepository
         _repositoriesCollection = _client.GetDatabase(mongoDatabaseName).GetCollection<BsonDocument>(mongoCollectionName);
     }
 
-    public async Task InsertManyAsync(IEnumerable<BsonDocument> items)
+    public async Task InsertManyAsync(IEnumerable<JsonElement> items)
     {
         try
         {
@@ -42,11 +43,22 @@ public class MongoDbRepository : IRepository
                 BsonDocument repoDocument = BsonDocument.Parse(itemJson);
 
                 // Add a retrieval timestamp
-                repoDocument.Add("retrieved_at", DateTime.UtcNow);
+                repoDocument.Add("internal_retrieved_at", DateTime.UtcNow);
+
+                // Ensure `id` is stored as a long (Int64)
+                if (item.TryGetProperty("id", out JsonElement idElement) && idElement.ValueKind == JsonValueKind.Number)
+                {
+                    long repoId = idElement.GetInt64(); // Explicitly retrieve as long
+                    repoDocument["id"] = new BsonInt64(repoId); // Ensure it's stored as BsonInt64
+                }
+                else
+                {
+                    Console.WriteLine("⚠️ Warning: Skipping a document with missing or invalid `id`.");
+                    continue; // Skip invalid documents
+                }
 
                 // Create a filter based on the repository id
-                long repoId = repoDocument["id"].AsInt64;
-                var filter = Builders<BsonDocument>.Filter.Eq("id", repoId);
+                var filter = Builders<BsonDocument>.Filter.Eq("id", repoDocument["id"].AsInt64);
 
                 // Create an upsert operation
                 var upsert = new ReplaceOneModel<BsonDocument>(filter, repoDocument) { IsUpsert = true };

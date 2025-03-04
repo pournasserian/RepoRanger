@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.Extensions.Configuration;
 
-public class GitHubSearchService
+namespace RepoRanger;
+
+public interface ISearchService
+{
+    Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, int minStars = 0, bool showForked = false, int minLastActivityDays = 0, string? language = null, int maxResults = 0);
+}
+
+public class GitHubSearchService : ISearchService
 {
     private readonly HttpClient _httpClient;
     private readonly string _apiToken;
@@ -23,16 +25,7 @@ public class GitHubSearchService
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiToken);
     }
 
-    /// <summary>
-    /// Searches GitHub repositories based on the provided keywords
-    /// </summary>
-    /// <param name="keywords">Keywords to search for</param>
-    /// <param name="minStars">Minimum stars (optional)</param>
-    /// <param name="minLastActivityDays">Minimum last activity in days (optional)</param>
-    /// <param name="language">Programming language filter (optional)</param>
-    /// <param name="maxResults">Maximum number of results to return, 0 for all (optional)</param>
-    /// <returns>IEnumerable of JsonElement representing repositories</returns>
-    public async Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, int minStars = 0, int minLastActivityDays = 0, string? language = null, int maxResults = 0)
+    public async Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, int minStars = 0, bool showForked = false, int minLastActivityDays = 0, string? language = null, int maxResults = 0)
     {
         if (string.IsNullOrWhiteSpace(keywords))
             throw new ArgumentException("Keywords cannot be empty", nameof(keywords));
@@ -43,12 +36,19 @@ public class GitHubSearchService
         bool hasMoreResults = true;
 
         // Build search query
-        var searchTerms = new List<string> { keywords };
+        var searchTerms = new List<string>
+    {
+        Uri.EscapeDataString(keywords),
+        "archived:false",
+        "is:public",
+        "in:name,description,readme,topics"
+    };
 
         if (minStars > 0)
-        {
             searchTerms.Add($"stars:>={minStars}");
-        }
+
+        if (!showForked)
+            searchTerms.Add("fork:false");
 
         if (minLastActivityDays > 0)
         {
@@ -59,14 +59,15 @@ public class GitHubSearchService
         if (!string.IsNullOrWhiteSpace(language))
             searchTerms.Add($"language:{language}");
 
-        string searchQuery = string.Join(" ", searchTerms);
+        string searchQuery = string.Join("+", searchTerms);
 
         Console.WriteLine($"Searching GitHub for: {searchQuery}");
 
         while (hasMoreResults)
         {
-            string apiUrl = $"https://api.github.com/search/repositories?q={Uri.EscapeDataString(searchQuery)}&sort=updated&order=desc&page={page}&per_page={perPage}";
-
+            searchQuery = $"q={searchQuery}&sort=star&order=desc&per_page={perPage}&page={page}";
+            //            
+            string apiUrl = $"https://api.github.com/search/repositories?{searchQuery}";
             HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
 
             if (response.IsSuccessStatusCode)
@@ -161,13 +162,13 @@ public class GitHubSearchService
 
         if (response.Headers.Contains("X-RateLimit-Remaining"))
         {
-            string rateRemaining = response.Headers.GetValues("X-RateLimit-Remaining").FirstOrDefault();
+            var rateRemaining = response.Headers.GetValues("X-RateLimit-Remaining").FirstOrDefault();
             if (int.TryParse(rateRemaining, out int remaining) && remaining < 5)
             {
                 // If rate limit is about to be reached, calculate wait time until reset
                 if (response.Headers.Contains("X-RateLimit-Reset"))
                 {
-                    string resetTimeStr = response.Headers.GetValues("X-RateLimit-Reset").FirstOrDefault();
+                    var resetTimeStr = response.Headers.GetValues("X-RateLimit-Reset").FirstOrDefault();
                     if (long.TryParse(resetTimeStr, out long resetTime))
                     {
                         var resetDateTime = DateTimeOffset.FromUnixTimeSeconds(resetTime).DateTime;
