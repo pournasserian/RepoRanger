@@ -27,6 +27,26 @@ public class GitHubSearchService : ISearchService
 
     public async Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, int minStars = 0, bool showForked = false, int minLastActivityDays = 0, string? language = null, int maxResults = 0)
     {
+        var results = new List<JsonElement>();
+        var monthSteps = 1;
+        var yearsToSearch = 1;
+        var createdFrom = DateTime.UtcNow.AddYears(-yearsToSearch);
+        var createdTo = createdFrom.AddMonths(monthSteps);
+
+        // loop over all months in the last 5 years
+        while (createdFrom < DateTime.UtcNow)
+        {
+            var searchResults = await SearchRepositoriesAsync(keywords, createdFrom, createdTo, minStars, showForked, minLastActivityDays, language, maxResults);
+            results.AddRange(searchResults);
+            createdFrom = createdTo;
+            createdTo = createdTo.AddMonths(monthSteps);
+        }
+
+        return results;
+    }
+
+    private async Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, DateTime createdFrom, DateTime createdTo, int minStars = 0, bool showForked = false, int minLastActivityDays = 0, string? language = null, int maxResults = 0)
+    {
         if (string.IsNullOrWhiteSpace(keywords))
             throw new ArgumentException("Keywords cannot be empty", nameof(keywords));
 
@@ -34,27 +54,23 @@ public class GitHubSearchService : ISearchService
         int page = 1;
         int perPage = 100; // Max allowed by GitHub API
         bool hasMoreResults = true;
+        var activityDate = DateTime.UtcNow.AddDays(-minLastActivityDays).ToString("yyyy-MM-dd");
 
         // Build search query
         var searchTerms = new List<string>
-    {
-        Uri.EscapeDataString(keywords),
-        "archived:false",
-        "is:public",
-        "in:name,description,readme,topics"
-    };
+        {
+            Uri.EscapeDataString(keywords),
+            "archived:false",
+            "is:public",
+            "in:name,description,readme,topics",
+            $"created:{createdFrom:yyyy-MM-dd}..{createdTo:yyyy-MM-dd}"
+        };
 
         if (minStars > 0)
             searchTerms.Add($"stars:>={minStars}");
 
         if (!showForked)
             searchTerms.Add("fork:false");
-
-        if (minLastActivityDays > 0)
-        {
-            var activityDate = DateTime.UtcNow.AddDays(-minLastActivityDays).ToString("yyyy-MM-dd");
-            searchTerms.Add($"pushed:>={activityDate}");
-        }
 
         if (!string.IsNullOrWhiteSpace(language))
             searchTerms.Add($"language:{language}");
@@ -179,4 +195,5 @@ public class GitHubSearchService : ISearchService
         }
         return false;
     }
+
 }
