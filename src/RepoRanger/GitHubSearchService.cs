@@ -59,14 +59,12 @@ public class GitHubSearchService : ISearchService
         if (!string.IsNullOrWhiteSpace(language))
             searchTerms.Add($"language:{language}");
 
-        string searchQuery = string.Join("+", searchTerms);
-
-        Console.WriteLine($"Searching GitHub for: {searchQuery}");
-
         while (hasMoreResults)
         {
-            searchQuery = $"q={searchQuery}&sort=star&order=desc&per_page={perPage}&page={page}";
-            //            
+            var searchQuery = $"q={string.Join("+", searchTerms)}&sort=star&order=desc&per_page={perPage}&page={page}";
+
+            Console.WriteLine($"Searching GitHub for: {searchQuery}");
+
             string apiUrl = $"https://api.github.com/search/repositories?{searchQuery}";
             HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
 
