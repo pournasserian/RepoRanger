@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 
@@ -21,7 +22,7 @@ public class GitHubSearchService : ISearchService
 
         _httpClient = new HttpClient();
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-        _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("GitHubRepoSearch", "1.0"));
+        _httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("RepoRanger", "1.0"));
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiToken);
     }
 
@@ -170,7 +171,7 @@ public class GitHubSearchService : ISearchService
         return results;
     }
 
-    private bool RateLimitExceeded(HttpResponseMessage response, out TimeSpan waitTime)
+    private static bool RateLimitExceeded(HttpResponseMessage response, out TimeSpan waitTime)
     {
         waitTime = TimeSpan.Zero;
 
