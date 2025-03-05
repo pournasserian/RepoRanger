@@ -17,7 +17,14 @@ var serviceProvider = services.BuildServiceProvider();
 var repository = serviceProvider.GetRequiredService<IRepository>();
 var searchService = serviceProvider.GetRequiredService<ISearchService>();
 
-var keywords = "ocr"; // new List<string> { "AI" }; //, "NLP", "Deep Learning", "Machine Learning", "Neural Networks" };
+var keywords = "fluentcms"; // new List<string> { "AI" }; //, "NLP", "Deep Learning", "Machine Learning", "Neural Networks" };
 var githubRepos = await searchService.SearchRepositoriesAsync(keywords, 100, false, 400);
+
+// add internal_created_at property to each repositor's json element
+foreach (var repo in githubRepos)
+{
+    repo.Add("internal_created_at", DateTime.UtcNow);
+}
+
 await repository.InsertManyAsync(githubRepos);
 
