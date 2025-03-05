@@ -8,7 +8,7 @@ namespace RepoRanger;
 
 public interface IRepository
 {
-    Task InsertManyAsync(IEnumerable<JsonElement> repositories);
+    Task InsertManyAsync(IEnumerable<BsonDocument> repositories);
 }
 
 public class MongoDbRepository : IRepository

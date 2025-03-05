@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using RepoRanger;
 
 var configuration = new ConfigurationBuilder()
@@ -11,20 +12,23 @@ var services = new ServiceCollection();
 
 services.AddScoped<IConfiguration>(sp => configuration);
 services.AddScoped<IRepository, MongoDbRepository>();
-services.AddScoped<ISearchService, GitHubSearchService>();
+services.AddScoped<ISearchService, GitHubService>();
 
 var serviceProvider = services.BuildServiceProvider();
 var repository = serviceProvider.GetRequiredService<IRepository>();
 var searchService = serviceProvider.GetRequiredService<ISearchService>();
 
-var keywords = "ai"; // new List<string> { "AI" }; //, "NLP", "Deep Learning", "Machine Learning", "Neural Networks" };
-var githubRepos = await searchService.SearchRepositoriesAsync(keywords, 100, false, 400);
+var keywords = "fluentcms"; // new List<string> { "AI" }; //, "NLP", "Deep Learning", "Machine Learning", "Neural Networks" };
+var githubRepos = await searchService.SearchRepositoriesAsync(keywords, 1, false, 400);
 
-// add internal_created_at property to each repositor's json element
-foreach (var repo in githubRepos)
+var bsonDocuments = new List<BsonDocument>();
+foreach (var item in githubRepos)
 {
-    repo.Add("internal_created_at", DateTime.UtcNow);
+    var bsonDocument = item.ConvertToBson();
+    var readmeContent = await searchService.ExtractReadmeAsync(bsonDocument["full_name"].ToString() ?? null, bsonDocument["default_branch"].ToString() ?? null);
+    bsonDocument.SetReadMeContent(readmeContent);
+    bsonDocuments.Add(bsonDocument);
 }
 
-await repository.InsertManyAsync(githubRepos);
+await repository.InsertManyAsync(bsonDocuments);
 

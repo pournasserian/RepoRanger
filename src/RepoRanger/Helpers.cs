@@ -31,4 +31,11 @@ public static class Helpers
             item["id"] = new BsonInt64(repoId); // Ensure it's stored as BsonInt64
         }
     }
+
+    public static void SetReadMeContent(this BsonDocument item, string? readmeContent)
+    {
+        if (string.IsNullOrWhiteSpace(readmeContent))
+            return;
+        item.Add("readme_content", readmeContent);
+    }
 }

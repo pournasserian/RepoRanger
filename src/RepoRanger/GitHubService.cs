@@ -8,14 +8,15 @@ namespace RepoRanger;
 public interface ISearchService
 {
     Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, int minStars = 0, bool showForked = false, int minLastActivityDays = 0, string? language = null, int maxResults = 0);
+    Task<string> ExtractReadmeAsync(string? githubFullName, string? branch = null);
 }
 
-public class GitHubSearchService : ISearchService
+public class GitHubService : ISearchService
 {
     private readonly HttpClient _httpClient;
     private readonly string _apiToken;
 
-    public GitHubSearchService(IConfiguration configuration)
+    public GitHubService(IConfiguration configuration)
     {
         _apiToken = configuration["GitHubSettings:ApiToken"] ??
             throw new Exception("Error: GitHub API token not properly configured in appsettings.json");
@@ -29,8 +30,8 @@ public class GitHubSearchService : ISearchService
     public async Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, int minStars = 0, bool showForked = false, int minLastActivityDays = 0, string? language = null, int maxResults = 0)
     {
         var results = new List<JsonElement>();
-        var monthSteps = 1;
-        var yearsToSearch = 1;
+        var monthSteps = 5;
+        var yearsToSearch = 20;
         var createdFrom = DateTime.UtcNow.AddYears(-yearsToSearch);
         var createdTo = createdFrom.AddMonths(monthSteps);
 
@@ -195,6 +196,101 @@ public class GitHubSearchService : ISearchService
             }
         }
         return false;
+    }
+
+    public async Task<string> ExtractReadmeAsync(string? githubFullName, string? branch = null)
+    {
+        if (string.IsNullOrWhiteSpace(githubFullName))
+            throw new ArgumentException("GitHub url cannot be empty", nameof(githubFullName));
+
+        try
+        {
+            // First, get the default branch if not specified
+            if (string.IsNullOrWhiteSpace(branch))
+                branch = await GetDefaultBranchAsync(githubFullName);
+
+            // Construct the README API URL
+            string apiUrl = $"https://api.github.com/repos/{githubFullName}/readme";
+
+            // Add branch parameter if specified
+            if (!string.IsNullOrWhiteSpace(branch))
+                apiUrl += $"?ref={Uri.EscapeDataString(branch)}";
+
+            // Send request to GitHub API
+            HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
+
+            // Check if README exists
+            if (!response.IsSuccessStatusCode)
+                return string.Empty;
+
+            // Parse the response
+            string responseContent = await response.Content.ReadAsStringAsync();
+            using var document = JsonDocument.Parse(responseContent);
+            var root = document.RootElement;
+
+            // Check if content exists
+            if (!root.TryGetProperty("content", out var contentElement) || !root.TryGetProperty("encoding", out var encodingElement))
+                return string.Empty;
+
+            var encodingType = encodingElement.GetString() ??
+                throw new Exception("Could not determine encoding type");
+
+            var encodedContent = contentElement.GetString() ??
+                throw new Exception("Could not determine encoded content");
+
+            // Decode the content based on encoding
+            string readmeContent = DecodeReadmeContent(encodedContent, encodingType);
+
+            return readmeContent;
+        }
+        catch (Exception ex)
+        {
+            // Log or handle the exception as needed
+            Console.WriteLine($"Error extracting README: {ex.Message}");
+            return string.Empty;
+        }
+    }
+
+    /// <summary>
+    /// Decodes the README content based on the encoding type
+    /// </summary>
+    private static string DecodeReadmeContent(string content, string encodingType)
+    {
+        switch (encodingType)
+        {
+            case "base64":
+                // Remove any whitespace from the base64 string
+                content = content.Replace("\n", "").Replace("\r", "");
+
+                // Decode base64
+                byte[] data = Convert.FromBase64String(content);
+                return Encoding.UTF8.GetString(data);
+
+            default:
+                throw new NotSupportedException($"Unsupported encoding type: {encodingType}");
+        }
+    }
+
+    private async Task<string> GetDefaultBranchAsync(string githubFullName)
+    {
+        string apiUrl = $"https://api.github.com/repos/{githubFullName}";
+
+        HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception($"Failed to retrieve repository information: {response.StatusCode}");
+        }
+
+        string responseContent = await response.Content.ReadAsStringAsync();
+        using var document = JsonDocument.Parse(responseContent);
+        var root = document.RootElement;
+
+        if (root.TryGetProperty("default_branch", out var defaultBranchElement))
+            return defaultBranchElement.GetString() ??
+                throw new Exception("Could not determine default branch");
+
+        throw new Exception("Could not determine default branch");
     }
 
 }
