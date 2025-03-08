@@ -27,7 +27,7 @@ public static class Helpers
         // Ensure `id` is stored as a long (Int64)
         if (item.TryGetElement("id", out BsonElement idElement) && idElement.Value.IsInt32)
         {
-            long repoId = idElement.Value.AsInt32; // Explicitly retrieve as long
+            long repoId = idElement.Value.AsInt64; // Explicitly retrieve as long
             item["id"] = new BsonInt64(repoId); // Ensure it's stored as BsonInt64
         }
     }
