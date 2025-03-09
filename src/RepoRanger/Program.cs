@@ -17,11 +17,10 @@ services.AddScoped<ISearchService, GitHubService>();
 var serviceProvider = services.BuildServiceProvider();
 var repository = serviceProvider.GetRequiredService<IRepository>();
 var searchService = serviceProvider.GetRequiredService<ISearchService>();
-
-var keywords = "fluentcms"; // new List<string> { "AI" }; //, "NLP", "Deep Learning", "Machine Learning", "Neural Networks" };
-var githubRepos = await searchService.SearchRepositoriesAsync(keywords, 1, false, 400);
+var githubRepos = await searchService.SearchRepositoriesAsync();
 
 var bsonDocuments = new List<BsonDocument>();
+
 foreach (var item in githubRepos)
 {
     var bsonDocument = item.ConvertToBson();
