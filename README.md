@@ -1,6 +1,6 @@
 # RepoRanger
 
-RepoRanger is a .NET application that searches for GitHub repositories based on specific criteria and stores the results in a MongoDB database. It also extracts and stores the README content of the repositories.
+RepoRanger is a .NET application that searches for GitHub repositories based on specific criteria, extract README content, and stores the results in a MongoDB database. It also extracts and stores the README content of the repositories.
 
 ## Configuration
 
