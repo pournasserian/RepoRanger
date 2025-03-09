@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
 using RepoRanger;
 
 var configuration = new ConfigurationBuilder()
@@ -17,18 +16,13 @@ services.AddScoped<ISearchService, GitHubService>();
 var serviceProvider = services.BuildServiceProvider();
 var repository = serviceProvider.GetRequiredService<IRepository>();
 var searchService = serviceProvider.GetRequiredService<ISearchService>();
+var githubRepos = await searchService.SearchRepositoriesAsync();
 
-var keywords = "fluentcms"; // new List<string> { "AI" }; //, "NLP", "Deep Learning", "Machine Learning", "Neural Networks" };
-var githubRepos = await searchService.SearchRepositoriesAsync(keywords, 1, false, 400);
+await repository.InsertManyAsync(githubRepos);
 
-var bsonDocuments = new List<BsonDocument>();
 foreach (var item in githubRepos)
 {
-    var bsonDocument = item.ConvertToBson();
-    var readmeContent = await searchService.ExtractReadmeAsync(bsonDocument["full_name"].ToString() ?? null, bsonDocument["default_branch"].ToString() ?? null);
-    bsonDocument.SetReadMeContent(readmeContent);
-    bsonDocuments.Add(bsonDocument);
+    var readmeContent = await searchService.ExtractReadmeAsync(item.FullName, item.DefaultBranch);
+    if (!string.IsNullOrWhiteSpace(readmeContent))
+        await repository.UpdateReadMeAsync(item.Id, readmeContent);
 }
-
-await repository.InsertManyAsync(bsonDocuments);
-
