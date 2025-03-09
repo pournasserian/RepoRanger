@@ -7,9 +7,9 @@ namespace RepoRanger;
 
 public interface ISearchService
 {
-    Task<IEnumerable<JsonElement>> SearchRepositoriesAsync();
-    Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, int minStars, bool showForked, DateTime createdFrom, DateTime createdTo, string? language = null);
-    Task<string> ExtractReadmeAsync(string? githubFullName, string? branch = null);
+    Task<IEnumerable<GitHubRepository>> SearchRepositoriesAsync();
+    Task<IEnumerable<GitHubRepository>> SearchRepositoriesAsync(string keywords, int minStars, bool showForked, DateTime createdFrom, DateTime createdTo, string? language = null);
+    Task<string?> ExtractReadmeAsync(string? githubFullName, string? branch = null);
 }
 
 public class GitHubService : ISearchService
@@ -31,7 +31,7 @@ public class GitHubService : ISearchService
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _apiToken);
     }
 
-    public async Task<IEnumerable<JsonElement>> SearchRepositoriesAsync() 
+    public async Task<IEnumerable<GitHubRepository>> SearchRepositoriesAsync() 
     {
         var keywords = _configuration["GitHubSettings:Keywords"] ?? "fluentcms";
         var minStars = int.Parse(_configuration["GitHubSettings:MinStars"] ?? "1");
@@ -40,17 +40,20 @@ public class GitHubService : ISearchService
         var createdTo = DateTime.Parse(_configuration["GitHubSettings:CreatedTo"] ?? DateTime.UtcNow.ToString());
         var language = _configuration["GitHubSettings:Language"];
 
-        return await SearchRepositoriesAsync(keywords, minStars, showForked, createdFrom, createdTo, language);
+        var result = await SearchRepositoriesAsync(keywords, minStars, showForked, createdFrom, createdTo, language);
+
+        // remove duplicate repositories by id
+        return result.GroupBy(x => x.Id).Select(x => x.First());
     }
 
-    public async Task<IEnumerable<JsonElement>> SearchRepositoriesAsync(string keywords, int minStars, bool showForked, DateTime createdFrom, DateTime createdTo, string? language = null)
+    public async Task<IEnumerable<GitHubRepository>> SearchRepositoriesAsync(string keywords, int minStars, bool showForked, DateTime createdFrom, DateTime createdTo, string? language = null)
     {
-        var results = new List<JsonElement>();
+        var results = new List<GitHubRepository>();
 
         var totalCount = await GetRepositoryCount(keywords, minStars, showForked, createdFrom, createdTo, language);
 
         if (totalCount == 0)
-            return results;
+            return [];
 
         if (totalCount > 1000)
         {
@@ -61,6 +64,7 @@ public class GitHubService : ISearchService
             var halfDays = days / 2;
             var halfCreatedTo = createdFrom.AddDays(halfDays);
 
+            Console.WriteLine($"Total repositories found: {totalCount}. Splitting search into two date ranges...");
             var firstHalfResult = await SearchRepositoriesAsync(keywords, minStars, showForked, createdFrom, halfCreatedTo, language);
             var secondHalfResult = await SearchRepositoriesAsync(keywords, minStars, showForked, halfCreatedTo, createdTo, language);
 
@@ -70,6 +74,7 @@ public class GitHubService : ISearchService
         }
         else
         {
+            Console.WriteLine($"Total repositories found: {totalCount}. Fetching repositories...");
             var finalResults = await RetrieveRepositoriesAsync(keywords, minStars, showForked, createdFrom, createdTo, language);
             results.AddRange(finalResults);
         }
@@ -137,9 +142,9 @@ public class GitHubService : ISearchService
         return $"q={string.Join("+", searchTerms)}&sort=star&order=desc&per_page={perPage}&page={page}";
     }
 
-    private async Task<IEnumerable<JsonElement>> RetrieveRepositoriesAsync(string keywords, int minStars, bool showForked, DateTime createdFrom, DateTime createdTo, string? language = null)
+    private async Task<IEnumerable<GitHubRepository>> RetrieveRepositoriesAsync(string keywords, int minStars, bool showForked, DateTime createdFrom, DateTime createdTo, string? language = null)
     {
-        var results = new List<JsonElement>();
+        var results = new List<GitHubRepository>();
         int page = 1;
         int perPage = 100; // Max allowed by GitHub API
         bool hasMoreResults = true;
@@ -149,6 +154,7 @@ public class GitHubService : ISearchService
 
         while (hasMoreResults)
         {
+            Console.WriteLine($"Fetching page {page} of repositories...");
             var document = await CallApi(searchTerms);
 
             if (document != null)
@@ -171,7 +177,7 @@ public class GitHubService : ISearchService
 
                         // Clone items to add to results
                         foreach (var item in newItems)
-                            results.Add(JsonDocument.Parse(item.GetRawText()).RootElement.Clone());
+                            results.Add(item.ConvertToGitHubRepository());
 
                         // Check if we need to fetch more pages
                         if (results.Count < totalCount && itemCount == perPage)
@@ -226,17 +232,18 @@ public class GitHubService : ISearchService
         return false;
     }
 
-    public async Task<string> ExtractReadmeAsync(string? githubFullName, string? branch = null)
+    public async Task<string?> ExtractReadmeAsync(string? githubFullName, string? branch = null)
     {
+        Console.WriteLine($"Extracting README for {githubFullName}...");
         if (string.IsNullOrWhiteSpace(githubFullName))
-            throw new ArgumentException("GitHub url cannot be empty", nameof(githubFullName));
+            return null;
+
+        // First, get the default branch if not specified
+        if (string.IsNullOrWhiteSpace(branch))
+            return null;
 
         try
         {
-            // First, get the default branch if not specified
-            if (string.IsNullOrWhiteSpace(branch))
-                branch = await GetDefaultBranchAsync(githubFullName);
-
             // Construct the README API URL
             string apiUrl = $"https://api.github.com/repos/{githubFullName}/readme";
 
@@ -249,7 +256,17 @@ public class GitHubService : ISearchService
 
             // Check if README exists
             if (!response.IsSuccessStatusCode)
-                return string.Empty;
+                return null;
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Check for rate limit headers
+                if (RateLimitExceeded(response, out TimeSpan waitTime))
+                {
+                    Console.WriteLine($"Rate limit exceeded. Waiting for {waitTime.TotalMinutes:F1} minutes...");
+                    await Task.Delay(waitTime);
+                }
+            }
 
             // Parse the response
             string responseContent = await response.Content.ReadAsStringAsync();
@@ -258,7 +275,7 @@ public class GitHubService : ISearchService
 
             // Check if content exists
             if (!root.TryGetProperty("content", out var contentElement) || !root.TryGetProperty("encoding", out var encodingElement))
-                return string.Empty;
+                return null;
 
             var encodingType = encodingElement.GetString() ??
                 throw new Exception("Could not determine encoding type");
@@ -275,7 +292,7 @@ public class GitHubService : ISearchService
         {
             // Log or handle the exception as needed
             Console.WriteLine($"Error extracting README: {ex.Message}");
-            return string.Empty;
+            return null;
         }
     }
 
@@ -297,28 +314,6 @@ public class GitHubService : ISearchService
             default:
                 throw new NotSupportedException($"Unsupported encoding type: {encodingType}");
         }
-    }
-
-    private async Task<string> GetDefaultBranchAsync(string githubFullName)
-    {
-        string apiUrl = $"https://api.github.com/repos/{githubFullName}";
-
-        HttpResponseMessage response = await _httpClient.GetAsync(apiUrl);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception($"Failed to retrieve repository information: {response.StatusCode}");
-        }
-
-        string responseContent = await response.Content.ReadAsStringAsync();
-        using var document = JsonDocument.Parse(responseContent);
-        var root = document.RootElement;
-
-        if (root.TryGetProperty("default_branch", out var defaultBranchElement))
-            return defaultBranchElement.GetString() ??
-                throw new Exception("Could not determine default branch");
-
-        throw new Exception("Could not determine default branch");
     }
 
 }

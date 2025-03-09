@@ -47,4 +47,30 @@ public static class Helpers
         // Add a new field `readme_content` with the provided content
         item.Add("readme_content", readmeContent);
     }
+
+    public static GitHubRepository ConvertToGitHubRepository(this JsonElement json)
+    {
+        return new GitHubRepository
+        {
+            Id = json.GetProperty("id").GetInt64(),
+            Name = json.GetProperty("name").GetString(),
+            FullName = json.GetProperty("full_name").GetString(),
+            HtmlUrl = json.GetProperty("html_url").GetString(),
+            Description = json.GetProperty("description").GetString(),
+            CreatedAt = json.GetProperty("created_at").GetDateTime(),
+            UpdatedAt = json.GetProperty("updated_at").GetDateTime(),
+            PushedAt = json.GetProperty("pushed_at").GetDateTime(),
+            Language = json.GetProperty("language").GetString(),
+            HomePage = json.GetProperty("homepage").GetString(),
+            Size = json.GetProperty("size").GetInt64(),
+            StargazersCount = json.GetProperty("stargazers_count").GetInt32(),
+            WatchersCount = json.GetProperty("watchers_count").GetInt32(),
+            ForksCount = json.GetProperty("forks_count").GetInt32(),
+            OpenIssuesCount = json.GetProperty("open_issues_count").GetInt32(),
+            Topics = json.GetProperty("topics").EnumerateArray().Select(t => t.GetString()).ToList(),
+            DefaultBranch = json.GetProperty("default_branch").GetString(),
+            IsTemplate = json.GetProperty("is_template").GetBoolean()
+        };
+    }
+
 }
