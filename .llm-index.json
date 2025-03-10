@@ -1,0 +1,208 @@
+{
+    "files": {
+        "README.md": {
+            "summary": "RepoRanger is a .NET application designed for searching GitHub repositories based on specific criteria, extracting README content, and storing information in a MongoDB database.",
+            "keywords": [
+                "repository search",
+                "README extraction",
+                "MongoDB integration",
+                "GitHub API",
+                "user notifications",
+                "repository statistics"
+            ]
+        },
+        "LICENSE": {
+            "summary": "This file contains the MIT License, which grants permission to use, copy, modify, and distribute the software with specific conditions.",
+            "keywords": [
+                "MIT License",
+                "copyright",
+                "permissions",
+                "software",
+                "warranty"
+            ]
+        },
+        "src/RepoRanger/appsettings.json": {
+            "summary": "Configuration settings for interacting with GitHub and MongoDB within the RepoRanger application.",
+            "keywords": [
+                "configuration",
+                "GitHub",
+                "MongoDB",
+                "API token",
+                "repository",
+                "database",
+                "settings"
+            ]
+        },
+        "src/RepoRanger/Repository.cs": {
+            "summary": "Implements a repository interface for managing GitHub repository data in a MongoDB database, including methods for inserting and updating repositories.",
+            "keywords": [
+                "IRepository",
+                "MongoDbRepository",
+                "InsertManyAsync",
+                "UpdateReadMeAsync",
+                "MongoDB",
+                "BsonDocument",
+                "GitHubRepository"
+            ]
+        },
+        "src/RepoRanger/RepoRanger.csproj": {
+            "summary": "Defines a .NET project for the RepoRanger application with configuration for building an executable targeting .NET 8.0, including JSON configuration support and MongoDB integration.",
+            "keywords": [
+                "project",
+                "dotnet",
+                "executable",
+                "configuration",
+                "MongoDB",
+                "dependencies"
+            ]
+        },
+        "src/RepoRanger/Program.cs": {
+            "summary": "Sets up the application's dependency injection and configuration to search GitHub repositories, store them in a MongoDB database, and update their README content.",
+            "keywords": [
+                "dependency injection",
+                "configuration",
+                "MongoDB",
+                "GitHub",
+                "repository",
+                "search service",
+                "README"
+            ]
+        },
+        "src/RepoRanger/Helpers.cs": {
+            "summary": "Provides helper methods to convert JSON elements to BsonDocuments and GitHubRepository objects, including setting properties like internal created timestamps and readme content.",
+            "keywords": [
+                "BsonDocument",
+                "JsonElement",
+                "ConvertToBson",
+                "SetReadMeContent",
+                "ConvertToGitHubRepository",
+                "internal_created_at",
+                "repository"
+            ]
+        },
+        "src/RepoRanger/GitHubService.cs": {
+            "summary": "Implements GitHub repository search functionalities including retrieving repositories based on various filters and extracting README files from GitHub repositories.",
+            "keywords": [
+                "GitHubService",
+                "ISearchService",
+                "SearchRepositoriesAsync",
+                "ExtractReadmeAsync",
+                "HttpClient",
+                "rate limiting",
+                "repository search",
+                "repository filtering",
+                "README extraction"
+            ]
+        },
+        "src/RepoRanger/GitHubRepository.cs": {
+            "summary": "Represents a GitHub repository with properties to store metadata including its name, description, URLs, statistics, and related information.",
+            "keywords": [
+                "GitHub",
+                "repository",
+                "metadata",
+                "properties",
+                "stargazers",
+                "issues",
+                "language"
+            ]
+        },
+        "src/RepoRanger.sln": {
+            "summary": "Microsoft Visual Studio solution file that defines the project structure and configuration for the RepoRanger application.",
+            "keywords": [
+                "Visual Studio",
+                "solution file",
+                "project configuration",
+                "RepoRanger",
+                "Debug",
+                "Release"
+            ]
+        },
+        "docs/Helpers.md": {
+            "summary": "The Helpers class facilitates conversion between JSON elements and MongoDB BsonDocuments, while also managing GitHub repository data within the RepoRanger application.",
+            "keywords": [
+                "Helpers",
+                "BsonDocument",
+                "JSON",
+                "GitHub",
+                "RepoRanger",
+                "utility methods",
+                "data conversion"
+            ]
+        },
+        "docs/GitHubService.md": {
+            "summary": "The GitHubService class enables repository search functionalities and README extraction using the GitHub API, facilitating integration of GitHub data into applications.",
+            "keywords": [
+                "GitHubService",
+                "search",
+                "repositories",
+                "README",
+                "GitHub API",
+                "configuration",
+                "async",
+                "RepoRanger"
+            ]
+        },
+        "docs/GitHubRepository.md": {
+            "summary": "Defines the GitHubRepository class to store and manage data from GitHub repositories in the RepoRanger application, including properties such as repository details, metadata, and usage in MongoDB storage.",
+            "keywords": [
+                "GitHubRepository",
+                "repository",
+                "GitHub API",
+                "data management",
+                "RepoRanger",
+                "MongoDB"
+            ]
+        },
+        "docs/index.md": {
+            "summary": "This file serves as the main page for the Developer Documentation of the RepoRanger application, outlining the structure and providing links to detailed guides on various components.",
+            "keywords": [
+                "documentation",
+                "RepoRanger",
+                "developers",
+                "guides",
+                "architecture"
+            ]
+        },
+        "docs/_config.yml": {
+            "summary": "Configuration file for GitHub Pages, specifying source branch, theme, layouts, and plugins for documentation.",
+            "keywords": [
+                "GitHub Pages",
+                "configuration",
+                "source branch",
+                "theme",
+                "layouts",
+                "plugins",
+                "jekyll"
+            ]
+        },
+        "docs/_layouts/_default.html": {
+            "summary": "Defines a default layout for the documentation site, ensuring consistent design and application across various pages.",
+            "keywords": [
+                "layout",
+                "documentation",
+                "default",
+                "registration",
+                "design"
+            ]
+        }
+    },
+    "prompts": [
+        "Write developer documentation main page index.md to have link to other docs and have main content.",
+        "improve documentations",
+        "improve documentations",
+        "improve documentations",
+        "improve documentations",
+        "How to host documentation to github pages? write required config files",
+        "How to host documentation to github pages? write required config files",
+        "Based on this documentation, add a good theme for my documentation. (...github documentation)",
+        "remove docs/ prefix from links in main documentation page. root page of documentation is /docs folder",
+        "add title and other meta data for doc pages.",
+        "add title and other meta data for doc pages.",
+        "add title and other meta data for doc pages.",
+        "add title and other meta data for doc pages.",
+        "In the docs/_layouts folder, navigate to your theme's _default.html file. create simple html based layout for documentations",
+        "does layout needs registration? if yes do it",
+        "fix default layout and register it in config",
+        "fix default layout and register it in config"
+    ]
+}

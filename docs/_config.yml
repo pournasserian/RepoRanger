@@ -1,0 +1,18 @@
+name: GitHub Pages
+
+# GitHub Pages configuration file
+
+# Specify the source folder for the documentation
+source_branch: gh-pages
+
+# Define the theme for the documentation
+theme: jekyll-theme-minimal
+
+# Register the layout for documentation pages
+layouts:
+  - _layouts/_default.html
+
+# Add additional settings as needed
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
