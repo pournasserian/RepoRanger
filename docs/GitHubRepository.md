@@ -1,9 +1,9 @@
 ---
 layout: page
-title: Developer Documentation for GitHubRepository
+title: GitHubRepository
 ---
 
-# Developer Documentation for GitHubRepository
+# GitHubRepository
 
 ## Overview
 The `GitHubRepository` class is a key component of the RepoRanger application, representing a GitHub repository with various properties that store essential information about the repository. This class is utilized to manage data retrieved from the GitHub API and facilitate operations such as data storage and manipulations.

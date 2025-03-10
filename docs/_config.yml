@@ -6,7 +6,7 @@ name: GitHub Pages
 source_branch: gh-pages
 
 # Define the theme for the documentation
-theme: jekyll-theme-minimal
+theme: jekyll-theme-slate
 
 # Register the layout for documentation pages
 layouts:

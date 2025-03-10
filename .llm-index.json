@@ -165,15 +165,14 @@
             ]
         },
         "docs/_config.yml": {
-            "summary": "Configuration file for GitHub Pages, specifying source branch, theme, layouts, and plugins for documentation.",
+            "summary": "Configuration file for GitHub Pages, specifying settings for documentation source, theme, layout, and plugins.",
             "keywords": [
                 "GitHub Pages",
                 "configuration",
-                "source branch",
+                "source_branch",
                 "theme",
                 "layouts",
-                "plugins",
-                "jekyll"
+                "plugins"
             ]
         },
         "docs/_layouts/_default.html": {
@@ -209,6 +208,11 @@
         "remove .md extension in docs links. default extension is html",
         "remove .md extension in docs links. default extension is html",
         "remove .md extension in docs links. default extension is html",
-        "remove .md extension in docs links. default extension is html"
+        "remove .md extension in docs links. default extension is html",
+        "remove developer documentation from titles",
+        "remove developer documentation from titles",
+        "remove developer documentation from titles",
+        "remove developer documentation from titles",
+        "styles doesn't work. use another theme"
     ]
 }

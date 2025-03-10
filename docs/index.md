@@ -1,11 +1,11 @@
 ---
 layout: page
-title: Developer Documentation
+title: Documentation
 ---
 
-# Developer Documentation
+# Documentation
 
-Welcome to the Developer Documentation for the RepoRanger application. This documentation provides detailed information on how to navigate and utilize various components of the application.
+Welcome to the Documentation for the RepoRanger application. This documentation provides detailed information on how to navigate and utilize various components of the application.
 
 ## Table of Contents
 - [Helpers](/docs/Helpers)

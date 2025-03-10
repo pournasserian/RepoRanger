@@ -1,9 +1,9 @@
 ---
 layout: page
-title: Developer Documentation for GitHubService
+title: GitHubService
 ---
 
-# Developer Documentation for GitHubService
+# GitHubService
 
 ## Overview
 The `GitHubService` class is a crucial component of the RepoRanger application that implements search functionality for GitHub repositories via the GitHub API. It allows developers to execute various repository search queries and extract README content, facilitating interaction with GitHub data and its seamless integration into other application modules.
