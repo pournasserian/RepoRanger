@@ -154,13 +154,14 @@
             ]
         },
         "docs/index.md": {
-            "summary": "This file serves as the main page for the Developer Documentation of the RepoRanger application, outlining the structure and providing links to detailed guides on various components.",
+            "summary": "Provides comprehensive developer documentation for the RepoRanger application, including guides on various components and best practices.",
             "keywords": [
                 "documentation",
                 "RepoRanger",
-                "developers",
                 "guides",
-                "architecture"
+                "GitHubService",
+                "GitHubRepository",
+                "best practices"
             ]
         },
         "docs/_config.yml": {
@@ -203,6 +204,11 @@
         "In the docs/_layouts folder, navigate to your theme's _default.html file. create simple html based layout for documentations",
         "does layout needs registration? if yes do it",
         "fix default layout and register it in config",
-        "fix default layout and register it in config"
+        "fix default layout and register it in config",
+        "remove .md extension in docs links. default extension is html",
+        "remove .md extension in docs links. default extension is html",
+        "remove .md extension in docs links. default extension is html",
+        "remove .md extension in docs links. default extension is html",
+        "remove .md extension in docs links. default extension is html"
     ]
 }
