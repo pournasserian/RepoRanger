@@ -1,0 +1,14 @@
+name: GitHub Pages
+
+# GitHub Pages configuration file
+
+# Specify the source folder for the documentation
+source_branch: gh-pages
+
+# Define the theme for the documentation
+theme: minima
+
+# Add additional settings as needed
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
