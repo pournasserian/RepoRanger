@@ -8,6 +8,10 @@ source_branch: gh-pages
 # Define the theme for the documentation
 theme: jekyll-theme-minimal
 
+# Register the layout for documentation pages
+layouts:
+  - _layouts/_default.html
+
 # Add additional settings as needed
 plugins:
   - jekyll-feed

@@ -164,14 +164,25 @@
             ]
         },
         "docs/_config.yml": {
-            "summary": "Configuration file for GitHub Pages documentation, specifying source branch, theme, and plugins.",
+            "summary": "Configuration file for GitHub Pages, specifying source branch, theme, layouts, and plugins for documentation.",
             "keywords": [
                 "GitHub Pages",
                 "configuration",
                 "source branch",
                 "theme",
+                "layouts",
                 "plugins",
                 "jekyll"
+            ]
+        },
+        "docs/_layouts/_default.html": {
+            "summary": "Defines a default layout for the documentation site, ensuring consistent design and application across various pages.",
+            "keywords": [
+                "layout",
+                "documentation",
+                "default",
+                "registration",
+                "design"
             ]
         }
     },
@@ -188,6 +199,10 @@
         "add title and other meta data for doc pages.",
         "add title and other meta data for doc pages.",
         "add title and other meta data for doc pages.",
-        "add title and other meta data for doc pages."
+        "add title and other meta data for doc pages.",
+        "In the docs/_layouts folder, navigate to your theme's _default.html file. create simple html based layout for documentations",
+        "does layout needs registration? if yes do it",
+        "fix default layout and register it in config",
+        "fix default layout and register it in config"
     ]
 }
