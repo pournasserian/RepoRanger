@@ -6,7 +6,7 @@ name: GitHub Pages
 source_branch: gh-pages
 
 # Define the theme for the documentation
-theme: minima
+theme: jekyll-theme-minimal
 
 # Add additional settings as needed
 plugins:

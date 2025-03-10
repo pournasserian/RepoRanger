@@ -1,3 +1,8 @@
+---
+layout: page
+title: Developer Documentation for GitHubRepository
+---
+
 # Developer Documentation for GitHubRepository
 
 ## Overview

@@ -1,3 +1,8 @@
+---
+layout: page
+title: Developer Documentation for GitHubService
+---
+
 # Developer Documentation for GitHubService
 
 ## Overview

@@ -118,64 +118,60 @@
             ]
         },
         "docs/Helpers.md": {
-            "summary": "The Helpers class provides utility methods for converting JSON elements to MongoDB BsonDocuments and managing GitHub repository data in the RepoRanger application.",
+            "summary": "The Helpers class facilitates conversion between JSON elements and MongoDB BsonDocuments, while also managing GitHub repository data within the RepoRanger application.",
             "keywords": [
                 "Helpers",
-                "JSON",
                 "BsonDocument",
+                "JSON",
                 "GitHub",
                 "RepoRanger",
-                "ConvertToBson",
-                "SetReadMeContent",
-                "ConvertToGitHubRepository"
+                "utility methods",
+                "data conversion"
             ]
         },
         "docs/GitHubService.md": {
-            "summary": "The `GitHubService` class provides functionality for searching GitHub repositories and extracting README content using the GitHub API, enabling seamless integration into the RepoRanger application.",
+            "summary": "The GitHubService class enables repository search functionalities and README extraction using the GitHub API, facilitating integration of GitHub data into applications.",
             "keywords": [
                 "GitHubService",
                 "search",
                 "repositories",
                 "README",
                 "GitHub API",
-                "asynchronous",
                 "configuration",
+                "async",
                 "RepoRanger"
             ]
         },
         "docs/GitHubRepository.md": {
-            "summary": "Defines the GitHubRepository class for managing and storing GitHub repository data within the RepoRanger application, facilitating interactions with the GitHub API.",
+            "summary": "Defines the GitHubRepository class to store and manage data from GitHub repositories in the RepoRanger application, including properties such as repository details, metadata, and usage in MongoDB storage.",
             "keywords": [
                 "GitHubRepository",
-                "RepoRanger",
                 "repository",
-                "API",
+                "GitHub API",
                 "data management",
-                "MongoDB",
-                "properties"
+                "RepoRanger",
+                "MongoDB"
             ]
         },
         "docs/index.md": {
-            "summary": "Developer documentation for the RepoRanger application, providing comprehensive guides on navigating and utilizing various components.",
+            "summary": "This file serves as the main page for the Developer Documentation of the RepoRanger application, outlining the structure and providing links to detailed guides on various components.",
             "keywords": [
                 "documentation",
                 "RepoRanger",
+                "developers",
                 "guides",
-                "GitHubService",
-                "GitHubRepository",
-                "helpers"
+                "architecture"
             ]
         },
         "docs/_config.yml": {
-            "summary": "Configuration file for GitHub Pages documentation including source folder, theme, and plugins.",
+            "summary": "Configuration file for GitHub Pages documentation, specifying source branch, theme, and plugins.",
             "keywords": [
                 "GitHub Pages",
                 "configuration",
-                "source_branch",
+                "source branch",
                 "theme",
                 "plugins",
-                "jekyll-feed",
-                "jekyll-seo-tag"
+                "jekyll"
             ]
         }
     },
@@ -186,6 +182,12 @@
         "improve documentations",
         "improve documentations",
         "How to host documentation to github pages? write required config files",
-        "How to host documentation to github pages? write required config files"
+        "How to host documentation to github pages? write required config files",
+        "Based on this documentation, add a good theme for my documentation. Adding a theme to your GitHub Pages site using Jekyll\nYou can personalize your Jekyll site by adding and customizing a theme.\n\nWho can use this feature?\nGitHub Pages is available in public repositories with GitHub Free and GitHub Free for organizations, and in public and private repositories with GitHub Pro, GitHub Team, GitHub Enterprise Cloud, and GitHub Enterprise Server. For more information, see GitHub’s plans.\n\nGitHub Pages now uses GitHub Actions to execute the Jekyll build. When using a branch as the source of your build, GitHub Actions must be enabled in your repository if you want to use the built-in Jekyll workflow. Alternatively, if GitHub Actions is unavailable or disabled, adding a .nojekyll file to the root of your source branch will bypass the Jekyll build process and deploy the content directly. For more information on enabling GitHub Actions, see Managing GitHub Actions settings for a repository.\n\nIn this article\nAdding a theme\nCustomizing your theme's CSS\nCustomizing your theme's HTML layout\nFurther reading\nPeople with write permissions for a repository can add a theme to a GitHub Pages site using Jekyll.\n\nIf you are publishing from a branch, changes to your site are published automatically when the changes are merged into your site's publishing source. If you are publishing from a custom GitHub Actions workflow, changes are published whenever your workflow is triggered (typically by a push to the default branch). If you want to preview your changes first, you can make the changes locally instead of on GitHub. Then, test your site locally. For more information, see Testing your GitHub Pages site locally with Jekyll.\n\nAdding a theme\nOn GitHub, navigate to your site's repository.\n\nNavigate to the publishing source for your site. For more information, see Configuring a publishing source for your GitHub Pages site.\n\nNavigate to _config.yml.\n\nIn the upper right corner of the file view, click  to open the file editor.\n\nScreenshot of a file. In the header, a button, labeled with a pencil icon, is outlined in dark orange.\nNote\n\nInstead of editing and committing the file using the default file editor, you can optionally choose to use the github.dev code editor by selecting the  dropdown menu and clicking github.dev. You can also clone the repository and edit the file locally via GitHub Desktop by clicking GitHub Desktop.\n\nScreenshot of a file. In the header, a downwards-facing triangle icon is outlined in dark orange.\nAdd a new line to the file for the theme name.\n\nTo use a supported theme, type theme: THEME-NAME, replacing THEME-NAME with the name of the theme as shown in the _config.yml of the theme's repository (most themes follow a jekyll-theme-NAME naming convention). For a list of supported themes, see Supported themes on the GitHub Pages site. For example, to select the Minimal theme, type theme: jekyll-theme-minimal.\nTo use any other Jekyll theme hosted on GitHub, type remote_theme: THEME-NAME, replacing THEME-NAME with the name of the theme as shown in the README of the theme's repository.\nClick Commit changes...\n\nIn the Commit",
+        "remove docs/ prefix from links in main documentation page. root page of documentation is /docs folder",
+        "add title and other meta data for doc pages.",
+        "add title and other meta data for doc pages.",
+        "add title and other meta data for doc pages.",
+        "add title and other meta data for doc pages."
     ]
 }
