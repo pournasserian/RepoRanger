@@ -1,0 +1,135 @@
+{
+    "files": {
+        "README.md": {
+            "summary": "RepoRanger is a .NET application that enables developers to search GitHub repositories based on specific criteria, extract README content, and store the results in a MongoDB database.",
+            "keywords": [
+                "GitHub",
+                "repository search",
+                "README extraction",
+                "MongoDB integration",
+                "user notifications",
+                "configuration",
+                "statistics",
+                "dotnet"
+            ]
+        },
+        "LICENSE": {
+            "summary": "This file contains the MIT License, granting permission for the software to be used, copied, modified, and distributed under specified conditions.",
+            "keywords": [
+                "license",
+                "MIT",
+                "copyright",
+                "permission",
+                "software"
+            ]
+        },
+        "src/RepoRanger/appsettings.json": {
+            "summary": "Configuration settings for connecting to GitHub and MongoDB, including filters for GitHub repository retrieval.",
+            "keywords": [
+                "GitHub",
+                "MongoDB",
+                "ApiToken",
+                "Keywords",
+                "MinStars",
+                "ShowForked",
+                "CreatedFrom",
+                "CreatedTo",
+                "Language",
+                "ConnectionString",
+                "DatabaseName",
+                "CollectionName"
+            ]
+        },
+        "src/RepoRanger/Repository.cs": {
+            "summary": "Defines a repository interface and a MongoDB implementation for managing GitHub repository data, including bulk insertions and readme content updates.",
+            "keywords": [
+                "IRepository",
+                "MongoDbRepository",
+                "InsertManyAsync",
+                "UpdateReadMeAsync",
+                "MongoDB",
+                "GitHubRepository",
+                "bulk operations"
+            ]
+        },
+        "src/RepoRanger/RepoRanger.csproj": {
+            "summary": "Configuration file for a .NET 8.0 console application using MongoDB, with support for dependency injection and JSON configuration.",
+            "keywords": [
+                "dotnet",
+                "project file",
+                "configuration",
+                "MongoDB",
+                "dependency injection",
+                "JSON",
+                "appsettings"
+            ]
+        },
+        "src/RepoRanger/Program.cs": {
+            "summary": "Sets up a dependency injection container and manages the search and storage of GitHub repositories, including the extraction and updating of README content.",
+            "keywords": [
+                "dependency injection",
+                "configuration",
+                "service provider",
+                "repository",
+                "search service",
+                "GitHub",
+                "MongoDB",
+                "asynchronous operations",
+                "README"
+            ]
+        },
+        "src/RepoRanger/Helpers.cs": {
+            "summary": "Provides helper methods for converting JSON elements to BsonDocuments and GitHubRepository objects, including ID handling and timestamp addition.",
+            "keywords": [
+                "BsonDocument",
+                "JsonElement",
+                "ConvertToBson",
+                "SetReadMeContent",
+                "ConvertToGitHubRepository",
+                "internal_created_at",
+                "id"
+            ]
+        },
+        "src/RepoRanger/GitHubService.cs": {
+            "summary": "Implements GitHub API search functionality for repositories, allowing searches based on various criteria and retrieval of README files.",
+            "keywords": [
+                "GitHubService",
+                "ISearchService",
+                "SearchRepositoriesAsync",
+                "ExtractReadmeAsync",
+                "HttpClient",
+                "repository",
+                "API",
+                "json",
+                "configuration"
+            ]
+        },
+        "src/RepoRanger/GitHubRepository.cs": {
+            "summary": "Represents a GitHub repository with properties that store information such as its ID, name, URL, description, and various statistics related to its usage.",
+            "keywords": [
+                "GitHub",
+                "repository",
+                "properties",
+                "metadata",
+                "statistics"
+            ]
+        },
+        "src/RepoRanger.sln": {
+            "summary": "Visual Studio solution file for the RepoRanger project, defining project configurations and settings for building the application.",
+            "keywords": [
+                "Visual Studio",
+                "solution",
+                "project configuration",
+                "RepoRanger",
+                "build settings"
+            ]
+        }
+    },
+    "prompts": [
+        "Update readme and make it more user and developer friendly. to gain more interest",
+        "Update readme, users should not think this is created by AI. run application command is not correct",
+        "make it longer and add roadmap section to",
+        "make readme longer and add roadmap section checklist too",
+        "in readme add more checklists for future improvements. and more features"
+    ]
+}
