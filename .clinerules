@@ -15,3 +15,18 @@ Create ADRs in /docs/adr for:
 -   New integration patterns
 -   Database schema changes
     Follow template in /docs/adr/template.md
+
+## Code Style & Patterns
+
+-   Generate API clients using OpenAPI Generator
+-   Use TypeScript axios template
+-   Place generated code in /src/generated
+-   Prefer composition over inheritance
+-   Use repository pattern for data access
+-   Follow error handling pattern in /src/utils/errors.ts
+
+## Testing Standards
+
+-   Unit tests required for business logic
+-   Integration tests for API endpoints
+-   E2E tests for critical user flows
